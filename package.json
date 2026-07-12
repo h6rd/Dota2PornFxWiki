@@ -5,9 +5,12 @@
     "docs:dev": "vitepress dev docs --host 0.0.0.0",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs",
-    "start": "vitepress dev docs"
+    "start": "vitepress dev docs",
+    "deploy": "npm run docs:build && wrangler deploy",
+    "preview": "npm run docs:build && wrangler dev"
   },
   "devDependencies": {
-    "vitepress": "latest"
+    "vitepress": "latest",
+    "wrangler": "^4.110.0"
   }
 }
