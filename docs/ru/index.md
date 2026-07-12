@@ -4,7 +4,7 @@ layout: home
 hero:
   name: "Dota2PornFxWiki"
   text: ""
-  tagline: "Здесь собрана полезная информация по сайту"
+  tagline: "Здесь собрана полезная информация по проекту"
   actions:
     - theme: brand
       text: "Безопасность"
