@@ -1,0 +1,45 @@
+:root {
+  --vp-c-brand-1: #6750a4;
+  --vp-c-brand-2: #7c4dff;
+  --vp-c-brand-3: #9575ff;
+  --vp-c-brand-soft: rgba(103, 80, 164, 0.14);
+
+  --vp-c-bg: #fef7ff;
+  --vp-c-bg-alt: #f7f2fa;
+  --vp-c-bg-elv: #f3edf7;
+  --vp-c-bg-soft: #ece6f0;
+
+  --vp-c-text-1: #1d1b20;
+  --vp-c-text-2: #49454f;
+  --vp-c-text-3: #79747e;
+
+  --vp-c-divider: #e7e0ec;
+
+  --vp-c-link: var(--vp-c-brand-1);
+  --vp-c-link-hover: var(--vp-c-brand-2);
+  --vp-button-brand-bg: var(--vp-c-brand-1);
+  --vp-button-brand-hover-bg: var(--vp-c-brand-2);
+  --vp-button-brand-text: #ffffff;
+  --vp-button-brand-hover-text: #ffffff;
+}
+
+.dark {
+  --vp-c-brand-1: #b595ff;
+  --vp-c-brand-2: #b190ff;
+  --vp-c-brand-3: #c8b0ff;
+  --vp-c-brand-soft: rgba(208, 188, 255, 0.14);
+
+  --vp-c-bg: #141218;
+  --vp-c-bg-alt: #1d1b20;
+  --vp-c-bg-elv: #2b2930;
+  --vp-c-bg-soft: #211f26;
+
+  --vp-c-text-1: #e6e0e9;
+  --vp-c-text-2: #c4d0c6;
+  --vp-c-text-3: #99c5a4;
+
+  --vp-c-divider: #49454f;
+
+  --vp-button-brand-text: #220a32;
+  --vp-button-brand-hover-text: #220a32;
+}
