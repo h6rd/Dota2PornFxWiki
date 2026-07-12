@@ -19,7 +19,7 @@ There are various approaches to modifying Dota 2. Understanding how these tools 
 | Process injection | Injects code directly into the game's memory | High |
 
 ::: tip Note
-Even though popular changers work by modifying system files, no bans have been recorded over 8-9 years of use.
+Even though popular changers work by modifying signatures, no bans have been recorded over 8-9 years of use.
 :::
 
 ### Features of our approach
