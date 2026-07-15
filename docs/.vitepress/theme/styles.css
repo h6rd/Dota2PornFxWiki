@@ -35,11 +35,30 @@
   --vp-c-bg-soft: #211f26;
 
   --vp-c-text-1: #e6e0e9;
-  --vp-c-text-2: #c4d0c6;
-  --vp-c-text-3: #99c5a4;
+  --vp-c-text-2: #cac4d0;
+  --vp-c-text-3: #938f99;
 
   --vp-c-divider: #49454f;
 
   --vp-button-brand-text: #220a32;
   --vp-button-brand-hover-text: #220a32;
+}
+
+lite-youtube {
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: var(--vp-c-bg-elv);
+  margin: 16px 0;
+}
+
+lite-youtube::part(playButton),
+lite-youtube > .lty-playbtn {
+  background-color: var(--vp-c-brand-1);
+  border-color: transparent;
+  box-shadow: 0 2px 8px rgba(103, 80, 164, 0.4);
+  transition: background-color 0.2s ease;
+}
+
+lite-youtube > .lty-playbtn::before {
+  border-color: transparent transparent transparent var(--vp-button-brand-text);
 }

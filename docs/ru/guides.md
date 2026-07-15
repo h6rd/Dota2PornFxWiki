@@ -152,3 +152,22 @@
 3. Запустите доту.
 
 ![Скриншот](/css.png)
+
+
+## Замена моделей
+<lite-youtube videoid="QJ993E-RB1s"></lite-youtube>
+
+
+## Замена и редактирование эффектов
+<lite-youtube videoid="xx8x77X6qRY"></lite-youtube>
+
+
+<!-- ## Изменение материалов
+<lite-youtube videoid=""></lite-youtube> -->
+
+
+<!-- ## Прикрепление эффектов к модели
+::: tip Важно
+Это упрощенный гайд, он не охватывает анимации и не учитывает физику ткани
+:::
+<lite-youtube videoid=""></lite-youtube> -->

@@ -8,6 +8,7 @@
     "start": "vitepress dev docs"
   },
   "devDependencies": {
+    "lite-youtube-embed": "^0.3.4",
     "vitepress": "latest"
   }
 }

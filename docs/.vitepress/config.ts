@@ -5,6 +5,38 @@ export default defineConfig({
     ['link', { rel: 'icon', href: '/favicon.ico' }]
   ],
   title: 'Dota2PornFxWiki',
+  themeConfig: {
+    search: {
+      provider: 'local',
+      options: {
+        locales: {
+          ru: {
+            translations: {
+              button: {
+                buttonText: 'Поиск',
+                buttonAriaLabel: 'Поиск'
+              },
+              modal: {
+                displayDetails: 'Показать подробный список',
+                resetButtonTitle: 'Сбросить поиск',
+                backButtonTitle: 'Закрыть поиск',
+                noResultsText: 'Ничего не найдено по запросу',
+                footer: {
+                  selectText: 'выбрать',
+                  selectKeyAriaLabel: 'ввод',
+                  navigateText: 'перейти',
+                  navigateUpKeyAriaLabel: 'вверх',
+                  navigateDownKeyAriaLabel: 'вниз',
+                  closeText: 'закрыть',
+                  closeKeyAriaLabel: 'esc'
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
   locales: {
     en: {
       label: 'English',

@@ -143,12 +143,19 @@ Edits made in Panorama Debugger aren't saved and reset when the game restarts â€
 ```
 
 ::: tip Tip
-You can read more about CSS [here](https://www.w3schools.com/html/html_css.asp), or use an AI assistant.
+You can read more about CSS [here](https://www.w3schools.com/html/html_css.asp), or use an AI.
 :::
 
 #### 5. Compiling and installing
 1. Launch **Minify**, select the mod you created (`Play Button`) and the desired game language.
 2. Click **Patch** and wait for the process to finish.
 3. Launch Dota.
-
 ![Screenshot](/css.png)
+
+
+## Replacing Models
+<lite-youtube videoid="QJ993E-RB1s"></lite-youtube>
+
+
+## Replacing and Editing Effects
+<lite-youtube videoid="xx8x77X6qRY"></lite-youtube>
