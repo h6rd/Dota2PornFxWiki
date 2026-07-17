@@ -48,6 +48,7 @@ export default defineConfig({
           {
             text: 'General',
             items: [
+              { text: 'Install', link: '/en/install' },
               { text: 'Is it safe?', link: '/en/safety' },
               { text: 'Troubleshooting', link: '/en/troubleshoot' },
               { text: 'Guides', link: '/en/guides' }
@@ -66,6 +67,7 @@ export default defineConfig({
           {
             text: 'Основное',
             items: [
+              { text: 'Установка', link: '/ru/install' },
               { text: 'Безопасно ли это?', link: '/ru/safety' },
               { text: 'Решение проблем', link: '/ru/troubleshoot' },
               { text: 'Гайды', link: '/ru/guides' }

@@ -159,3 +159,10 @@ You can read more about CSS [here](https://www.w3schools.com/html/html_css.asp),
 
 ## Replacing and Editing Effects
 <lite-youtube videoid="xx8x77X6qRY"></lite-youtube>
+
+
+## Attaching effects to model
+::: tip Important
+This is a simplified guide, it does not cover animations or cloth physics
+:::
+<lite-youtube videoid="2T66IYouIpQ"></lite-youtube>

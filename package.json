@@ -10,5 +10,8 @@
   "devDependencies": {
     "lite-youtube-embed": "^0.3.4",
     "vitepress": "latest"
+  },
+  "dependencies": {
+    "@fancyapps/ui": "^6.1.14"
   }
 }

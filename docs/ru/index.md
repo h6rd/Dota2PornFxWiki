@@ -7,8 +7,11 @@ hero:
   tagline: "Здесь собрана полезная информация по проекту"
   actions:
     - theme: brand
+      text: "Установка"
+      link: /ru/install.md
+    - theme: alt
       text: "Безопасность"
-      link: /ru/safety.md
+      link: /ru/safety.md  
     - theme: alt
       text: "Решение проблем"
       link: /ru/troubleshoot.md
