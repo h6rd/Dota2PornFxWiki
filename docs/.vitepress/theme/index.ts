@@ -25,7 +25,7 @@ export default {
       if (import.meta.env.SSR) return
 
       try {
-        const { Fancybox } = await import('@fancyapps/ui/dist/fancybox/fancybox.esm.js')
+        const { Fancybox } = await import('@fancyapps/ui')
 
         Fancybox.close()
         
