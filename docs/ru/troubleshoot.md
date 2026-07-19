@@ -56,7 +56,7 @@
 ### Если загрузка останавливается, попробуйте:
 * Использовать VPN
 * Использовать одно из зеркал сайта: [**Netlify**](https://d2pfx.netlify.app/), [**Vercel**](https://d2pfx.vercel.app/), [**Onrender**](https://d2pfx.onrender.com/), [**Codeberg**](https://hrdq.codeberg.page/Dota2PornFxWeb/)
-* Использовать zapret (если вы в РФ) c добавлением в файл `list-general.txt`:
+* Использовать [zapret](https://github.com/flowseal/zapret-discord-youtube) (если вы в РФ) c добавлением в файл `list-general.txt`:
 ```text
 github.com
 github.io
