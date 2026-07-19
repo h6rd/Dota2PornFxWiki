@@ -161,8 +161,115 @@ You can read more about CSS [here](https://www.w3schools.com/html/html_css.asp),
 <lite-youtube videoid="xx8x77X6qRY"></lite-youtube>
 
 
-## Attaching effects to model
+<!-- ## Attaching effects to model
 ::: tip Important
 This is a simplified guide, it does not cover animations or cloth physics
 :::
-<lite-youtube videoid="2T66IYouIpQ"></lite-youtube>
+<lite-youtube videoid="2T66IYouIpQ"></lite-youtube> -->
+
+
+## Text Replacement
+Text in Dota 2 is stored in `.txt` files.
+
+### Main Directories
+All localization files are located in the `resource/localization/` folder.
+
+| Text Type | File |
+| :--- | :--- |
+| **Game interface** | `dota_<language>.txt` |
+| **Ability text** | `abilities_<language>.txt` |
+| **Settings** | `gameui_<language>.txt` |
+
+Replace `<language>` with your game language, for example `english`.
+
+### Tools
+* **Extract/View:** [Source2Viewer](https://valveresourceformat.github.io/)
+* **Editing:** Notepad++, VS Code, or any text editor.
+* **Packaging:** [VPKTool](https://h6rd.github.io/Dota2PornFxWeb/?category=tools&mod=VPKTool+-+Extract+%26+Pack+VPKs)
+
+### Example: Changing Match Result Text
+In this example, we'll change the "Win" and "Loss" text shown in the match history.
+
+1. Open `pak01_dir.vpk` using **Source2Viewer**.
+2. Navigate to `resource/localization/`.
+3. Extract `dota_english.txt` (or the file for your language).
+4. Find these lines:
+
+```text
+"dota_profile_recent_game_result_win" "Win"
+    "dota_profile_recent_game_result_loss" "Loss"
+```
+
+5. Replace the text:
+
+```text
+"dota_profile_recent_game_result_win" "HELL YEAH"
+    "dota_profile_recent_game_result_loss" "50%"
+```
+
+6. Save the file.
+7. Create the folder `resource/localization/` and place the edited file inside it.
+8. Create a `.vpk` archive using **VPKTool**.
+9. Move the finished `.vpk` file into your game's language folder.
+
+![Screenshot](/en-text.png)
+
+::: warning Important
+Valve frequently updates localization files, sometimes even without releasing a game patch. After an update, your changes may stop working or some text may become incorrect.
+
+If this happens, extract the updated localization file again and repeat your changes, or use the automatic method below.
+:::
+
+### Automatic Replacement with a Script
+This method automatically reapplies your changes to the latest localization file after every Dota 2 update.
+
+#### 1. Installation
+Install:
+
+- [Python](https://www.python.org/downloads/)
+- the `vpk` module:
+
+```bash
+pip install vpk
+```
+
+Download the [archive](/en-text.zip) containing the script and extract it.
+
+#### 2. Configuration
+Open `main.py` and set the required paths:
+
+```python
+VPK_PATH = r"C:\Program Files (x86)\Steam\steamapps\common\dota 2 beta\game\dota\pak01_dir.vpk"
+INTERNAL_FILE_PATH = "resource/localization/dota_english.txt"
+REPLACE_FILE = "replace.txt"
+OUTPUT_VPK = "pak02_dir.vpk"
+```
+
+Parameters:
+- `VPK_PATH` — path to the original `pak01_dir.vpk`.
+- `INTERNAL_FILE_PATH` — path to the localization file inside the archive.
+- `REPLACE_FILE` — file containing your custom replacements.
+- `OUTPUT_VPK` — name of the generated mod.
+
+#### 3. Adding Replacements
+Open `replace.txt` and add the lines you want to replace:
+
+```text
+"dota_profile_recent_game_result_win" "HELL YEAH"
+"dota_profile_recent_game_result_loss" "50%"
+```
+
+#### 4. Building the Mod
+Open a command prompt in the script folder and run:
+
+```bash
+python main.py
+```
+
+When the script finishes, it will generate `pak02_dir.vpk`.
+
+Move it to your game's language folder.
+
+::: tip Tip
+After every Dota 2 update, simply run `python main.py` again. The script will automatically use the latest localization file and reapply all replacements from `replace.txt`.
+:::

@@ -21,11 +21,3 @@ There are various approaches to modifying Dota 2. Understanding how these tools 
 ::: tip Note
 Even though popular changers work by modifying signatures, no bans have been recorded over 8-9 years of use.
 :::
-
-### Features of our approach
-Most third-party item changers modify the `items_game.txt` file. This requires manipulating signatures, which Valve may classify as tampering.
-
-**Advantages of our mods:**
-* We don't touch the game's executable files or modify signatures.
-* Our mods don't stop working after Dota 2 updates, since they aren't tied to hardcoded addresses.
-* Modifications load similarly to official localization packages (voiceovers), using vpk.
