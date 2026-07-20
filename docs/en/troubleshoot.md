@@ -12,7 +12,6 @@ Terrains come in two types, each requiring its own installation method:
 * Make sure to **disable the Dota+ terrain** in the game settings, otherwise it will conflict with the mod.
 :::
 
----
 
 ## No changes visible / mod not working
 If mods don't show up after installation, follow these steps:
@@ -37,7 +36,6 @@ Make sure the correct command is set in Dota 2's launch options:
 *Compare the result with the image below:*
 ![Settings screenshot](/files.png)
 
----
 
 ## VAC error
 If a **VAC** error message appears when launching the game or searching for a match, don't panic. This is a Dota bug and is not caused by using mods.
@@ -54,7 +52,7 @@ Once the check is complete, restart the game.
 
 ### If the download stalls, try:
 * Using a VPN
-* Using one of the site mirrors: [**Netlify**](https://d2pfx.netlify.app/), [**Vercel**](https://d2pfx.vercel.app/), [**Onrender**](https://d2pfx.onrender.com/), [**Codeberg**](https://hrdq.codeberg.page/Dota2PornFxWeb/)
+* Using one of the site mirrors: [**Netlify**](https://d2pfx.netlify.app/), [**Vercel**](https://d2pfx.vercel.app/), [**Onrender**](https://d2pfx.onrender.com/)
 
 ### If that doesn't help:
 1. Refresh the page
@@ -62,3 +60,11 @@ Once the check is complete, restart the game.
 3. Start the download via the cart
 4. Wait for the download to finish, or for it to freeze again
 5. Copy the console output and send it to [**Discord**](https://discord.gg/PBvG8D9MxT) along with a description of the issue
+
+
+## Website won't load
+
+### If the site does not load, try:
+* Using a VPN
+* Using one of the site mirrors: [**Netlify**](https://d2pfx.netlify.app/), [**Vercel**](https://d2pfx.vercel.app/), [**Onrender**](https://d2pfx.onrender.com/)
+> [Mirror status checker](https://github.com/h6rd/Dota2PornFxStatus#live-status)

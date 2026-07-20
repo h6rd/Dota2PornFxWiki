@@ -106,9 +106,9 @@
     margin-bottom: 21px;
     margin-right: 58px;
     padding: 4px 12px 4px 12px;
-    background-color: #6d47bf; /* фиолетовый фон */
-    font-style: italic; /* стиля шрифта */
-    box-shadow: fill #5eff6e 1px 1px 8px 1px; /* зеленая тень */
+    background-color: #6d47bf; /* фиолетовый фон [!code focus]*/
+    font-style: italic; /* стиля шрифта [!code focus]*/
+    box-shadow: fill #5eff6e 1px 1px 8px 1px; /* зеленая тень [!code focus] */
     opacity: 1.0;
     transition-property: box-shadow, background-color, opacity, transform;
     transition-delay: 0.0s;
@@ -272,5 +272,63 @@ python main.py
 После каждого обновления Dota 2 достаточно снова запустить `python main.py`. Скрипт автоматически возьмет новую версию файла локализации и повторно применит все замены из `replace.txt`.
 :::
 
-<!-- ## Изменение материалов
-<lite-youtube videoid=""></lite-youtube> -->
+
+## Замена шрифта
+Шрифты в Dota 2 хранятся в виде обычных файлов `.ttf`/`.otf`, поэтому для их замены не нужны Source2Viewer и VPKTool, достаточно подготовить файлы шрифта и подложить их в нужную папку.
+
+### Основные директории
+Шрифты хранятся в папке `panorama/fonts/`. 
+
+Игра использует два основных шрифта:
+
+| Название шрифта | Файл |
+| :--- | :--- |
+| **Radiance** | `radiance-light.otf` |
+| **Reaver** | `reaver-regular.otf` |
+
+### Инструменты
+* **Редактирование шрифтов:** [FontForge](https://fontforge.org/en-US/downloads/)
+* **Поиск шрифтов:** [online-fonts](https://online-fonts.com/) или любой другой сайт со шрифтами
+
+### Пример: замена основного шрифта интерфейса
+1. Найдите и скачайте понравившийся шрифт, например на [online-fonts](https://online-fonts.com/). 
+
+При выборе рекомендуется вставлять в поле предпросмотра следующий текст, чтобы сразу оценить, как шрифт выглядит на кириллице, цифрах и спецсимволах:
+```text
+BrownЧёрный123./?!
+```
+2. Скачайте файл шрифта и сделайте его копию, вам понадобятся два одинаковых файла: 
+один станет заменой Radiance, другой - заменой Reaver.
+
+3. Откройте **FontForge** и откройте в нем первый файл шрифта.
+
+4. Перейдите в **Element → Font Info** и укажите:
+   - **Fontname:** `Radiance-Light`
+   - **Family Name:** `Radiance`
+![Скриншот](/font-rename.png)   
+
+5. Нажмите **OK**, затем **File → Generate Fonts**.
+
+6. Выберите формат **OpenType (CFF)**, укажите имя файла `Radiance-Light` и нажмите **Generate** (если появится предупреждение - нажмите **Yes**, если возникнет ошибка — жмите **Generate**).
+![Скриншот](/font-gen.png) 
+
+7. Повторите шаги 3–6 со вторым (скопированным) файлом шрифта, но укажите другие значения:
+   - **Fontname:** `Reaver-Regular`
+   - **Family Name:** `Reaver`
+   - **Имя файла:** `Reaver-Regular`
+
+8. Перейдите в папку с установленными шрифтами:
+```text
+Steam\steamapps\common\dota 2 beta\game\dota\panorama\fonts
+```
+
+::: tip Совет
+Перед изменениями скопируйте папку `fonts` на рабочий стол — это позволит быстро вернуть всё в исходное состояние.
+:::
+
+9. Удалите в этой папке все файлы, кроме `grenze-bold` и `creepster-regular`, и поместите туда два сгенерированных файла (`Radiance-Light.otf` и `Reaver-Regular.otf`).
+10. Запустите доту.
+
+::: warning Как вернуть всё обратно
+Чтобы откатить изменения, удалите папку `fonts` и перенесите на её место ранее скопированную папку с рабочего стола. Если копии не осталось — удалите папку `fonts` и запустите проверку целостности файлов.
+:::

@@ -106,9 +106,9 @@ Edits made in Panorama Debugger aren't saved and reset when the game restarts �
     margin-bottom: 21px;
     margin-right: 58px;
     padding: 4px 12px 4px 12px;
-    background-color: #6d47bf; /* purple background */
-    font-style: italic; /* font style */
-    box-shadow: fill #5eff6e 1px 1px 8px 1px; /* green glow */
+    background-color: #6d47bf; /* purple background [!code focus]*/
+    font-style: italic; /* font style [!code focus]*/
+    box-shadow: fill #5eff6e 1px 1px 8px 1px; /* green glow [!code focus]*/
     opacity: 1.0;
     transition-property: box-shadow, background-color, opacity, transform;
     transition-delay: 0.0s;
@@ -272,4 +272,64 @@ Move it to your game's language folder.
 
 ::: tip Tip
 After every Dota 2 update, simply run `python main.py` again. The script will automatically use the latest localization file and reapply all replacements from `replace.txt`.
+:::
+
+
+## Font Replacement
+Fonts in Dota 2 are stored as regular `.ttf`/`.otf` files, so replacing them doesn't require Source2Viewer or VPKTool — you just need to prepare the font files and place them in the right folder.
+
+### Main Directories
+Fonts are stored in the `panorama/fonts/` folder.
+
+The game uses two main fonts:
+
+| Font Name | File |
+| :--- | :--- |
+| **Radiance** | `radiance-light.otf` |
+| **Reaver** | `reaver-regular.otf` |
+
+### Tools
+* **Font editing:** [FontForge](https://fontforge.org/en-US/downloads/)
+* **Font search:** [online-fonts](https://online-fonts.com/) or any other font website
+
+### Example: Replacing the Main Interface Font
+1. Find and download a font you like, for example on [online-fonts](https://online-fonts.com/).
+
+When choosing a font, it's recommended to paste the following text into the preview field to immediately see how the font looks with Cyrillic characters, numbers, and special symbols:
+```text
+BrownЧёрный123./?!
+```
+2. Download the font file and make a copy of it — you'll need two identical files: one will replace Radiance, the other will replace Reaver.
+
+3. Open **FontForge** and open the first font file in it.
+
+4. Go to **Element → Font Info** and specify:
+   - **Fontname:** `Radiance-Light`
+   - **Family Name:** `Radiance`
+![Screenshot](/font-rename.png)
+
+5. Click **OK**, then **File → Generate Fonts**.
+
+6. Select the **OpenType (CFF)** format, set the file name to `Radiance-Light`, and click **Generate** (if a warning appears, click **Yes**; if an error occurs, click **Generate** again).
+![Screenshot](/font-gen.png)
+
+7. Repeat steps 3–6 with the second (copied) font file, but specify different values:
+   - **Fontname:** `Reaver-Regular`
+   - **Family Name:** `Reaver`
+   - **File name:** `Reaver-Regular`
+
+8. Navigate to the folder with the installed fonts:
+```text
+Steam\steamapps\common\dota 2 beta\game\dota\panorama\fonts
+```
+
+::: tip Tip
+Before making changes, copy the `fonts` folder to your desktop — this will let you quickly restore everything to its original state.
+:::
+
+9. Delete all files in this folder except `grenze-bold` and `creepster-regular`, and place the two generated files (`Radiance-Light.otf` and `Reaver-Regular.otf`) there.
+10. Launch Dota.
+
+::: warning How to Revert Everything
+To roll back the changes, delete the `fonts` folder and put the previously copied folder from your desktop in its place. If you don't have a copy left, delete the `fonts` folder and run a file integrity check.
 :::
