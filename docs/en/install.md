@@ -6,7 +6,7 @@ There are several ways to install mods from the website. Choose the option that 
 2. [Manual installation via cart (without VPKMerge)](#manual-cart-no-merge)
 3. [Manual installation via cart (with VPKMerge)](#manual-cart-merge)
 4. [Automatic installation via Mod Manager](#auto-mod-manager)
-5. [Installation via Minify](#minify)
+5. [Installation via Minify](#minify) `BETA`
 
 ::: tip English game language
 Dota won't pick up custom language folders like `dota_123`, `dota_minify`, and so on. For the English game language, use **Minify** version **v1.14rc5**:
