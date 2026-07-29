@@ -12,7 +12,7 @@ There are several ways to install mods from the website. Choose the option that 
 Dota won't pick up custom language folders like `dota_123`, `dota_minify`, and so on. For the English game language, use **Minify** version **v1.14rc5**:
 
 1. Download and launch [**Minify v1.14rc5**](https://github.com/Egezenn/dota2-minify/releases/tag/Minify-v1.14rc5).
-2. Download [the mod](/English-Fix.zip) and move its contents into the `mods` folder inside Minify.
+2. Download [the mod](https://github.com/Egezenn/dota2-minify-community/releases/download/_/English.Fix.zip) and move its contents into the `mods` folder inside Minify.
 3. In Minify, at the bottom of the window, select any language other than `minify` (for example, `russian`).
 4. Click the **Patch** button.
 5. Drop all other mods from the website into the folder for the language you selected in Minify.

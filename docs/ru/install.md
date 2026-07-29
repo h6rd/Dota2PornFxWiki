@@ -12,7 +12,7 @@
 Дота не будет использовать кастомные языки `dota_123`, `dota_minify` и другие. Для английского языка используйте **Minify** версии **v1.14rc5**:
 
 1. Скачайте и запустите [**Minify v1.14rc5**](https://github.com/Egezenn/dota2-minify/releases/tag/Minify-v1.14rc5).
-2. Скачайте [Мод](/English-Fix.zip) и перенесите его содержимое в папку `mods` внутри Minify.
+2. Скачайте [Мод](https://github.com/Egezenn/dota2-minify-community/releases/download/_/English.Fix.zip) и перенесите его содержимое в папку `mods` внутри Minify.
 3. В Minify внизу окна выберите любой язык, кроме `minify` (например, `russian`).
 4. Нажмите кнопку **Patch**.
 5. Все остальные моды с сайта кидайте в папку с языком, который выбран в Minify
