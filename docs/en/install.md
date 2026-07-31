@@ -5,8 +5,8 @@ There are several ways to install mods from the website. Choose the option that 
 1. [Manual installation of each mod individually](#manual-single)
 2. [Manual installation via cart (without VPKMerge)](#manual-cart-no-merge)
 3. [Manual installation via cart (with VPKMerge)](#manual-cart-merge)
-4. [Automatic installation via Mod Manager](#auto-mod-manager)
-5. [Installation via Minify](#minify) `BETA`
+4. [Installation via Minify](#minify) `BETA`
+5. [Automatic installation via Mod Manager](#auto-mod-manager)
 
 ::: tip English game language
 Dota won't pick up custom language folders like `dota_123`, `dota_minify`, and so on. For the English game language, use **Minify** version **v1.14rc5**:
@@ -73,18 +73,7 @@ Using VPKMerge allows you to automatically combine mods into a few files, avoidi
 
 ---
 
-## 4. Automatic Installation via Mod Manager {#auto-mod-manager}
-
-The easiest and fastest method: the app downloads, installs, and updates the mods you need on its own — no manual archives, no juggling folders.
-
-1. Download and install [Mod Manager](https://thefleece.github.io/dota2-mod-manager/).
-2. Open the settings and set the language used by your game.
-3. Find the mod you want in the list, click on it, and confirm the install with the **Install** button.
-4. Сlick **Play**.
-
----
-
-## 5. Installation via Minify `BETA` {#minify}
+## 4. Installation via Minify `BETA` {#minify}
  
 1. Download and install the latest RC version of [Minify](https://github.com/Egezenn/dota2-minify/releases/tag/Minify-v1.14rc5).
 2. At the bottom of the Minify window, click the `D2PFX` icon next to the language selector — this opens the built-in mod store.
@@ -94,3 +83,12 @@ The easiest and fastest method: the app downloads, installs, and updates the mod
 ::: tip
 This method is currently in `BETA` status, so not all mods work correctly
 :::
+
+---
+
+## 5. Automatic Installation via Mod Manager {#auto-mod-manager}
+
+1. Download and install [Mod Manager](https://thefleece.github.io/dota2-mod-manager/).
+2. Open the settings and set the language used by your game.
+3. Find the mod you want in the list, click on it, and confirm the install with the **Install** button.
+4. Сlick **Play**.

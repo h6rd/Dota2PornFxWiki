@@ -68,3 +68,15 @@ Once the check is complete, restart the game.
 * Using a VPN
 * Using one of the site mirrors: [**Netlify**](https://d2pfx.netlify.app/), [**Vercel**](https://d2pfx.vercel.app/), [**Onrender**](https://d2pfx.onrender.com/)
 > [Mirror status checker](https://github.com/h6rd/Dota2PornFxStatus#live-status)
+
+
+## Emblem is not displayed
+
+If the installed emblem is not showing up in-game, follow these steps:
+
+1. Open the console in the game before the match.
+2. Enter the command: `r_draw_selected_ring 0`
+3. Immediately after, enter: `r_draw_selected_ring 1`
+
+If this didn't help:
+* Make sure that the `Misc Optimization` mod is disabled inside the **Minify** mod.
