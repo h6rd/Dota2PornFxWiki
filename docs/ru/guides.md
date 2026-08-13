@@ -162,11 +162,11 @@
 <lite-youtube videoid="xx8x77X6qRY"></lite-youtube>
 
 
-<!-- ## Прикрепление эффектов к модели
+## Прикрепление эффектов к модели
 ::: tip Важно
 Это упрощенный гайд, он не охватывает анимации и не учитывает физику ткани
 :::
-<lite-youtube videoid="2T66IYouIpQ"></lite-youtube> -->
+<lite-youtube videoid="2T66IYouIpQ"></lite-youtube>
 
 
 ## Замена текста
