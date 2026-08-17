@@ -17,4 +17,7 @@ hero:
     - theme: alt
       text: "Guides"
       link: /en/guides.md
+    - theme: alt
+      text: "Upload mod to website"
+      link: /en/upload.md
 ---

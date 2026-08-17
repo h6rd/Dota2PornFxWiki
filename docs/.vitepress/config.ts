@@ -51,7 +51,8 @@ export default defineConfig({
               { text: 'Install', link: '/en/install' },
               { text: 'Is it safe?', link: '/en/safety' },
               { text: 'Troubleshooting', link: '/en/troubleshoot' },
-              { text: 'Guides', link: '/en/guides' }
+              { text: 'Guides', link: '/en/guides' },
+              { text: 'Upload mod to website', link: '/en/upload' }
             ]
           }
         ]
@@ -70,7 +71,8 @@ export default defineConfig({
               { text: 'Установка', link: '/ru/install' },
               { text: 'Безопасно ли это?', link: '/ru/safety' },
               { text: 'Решение проблем', link: '/ru/troubleshoot' },
-              { text: 'Гайды', link: '/ru/guides' }
+              { text: 'Гайды', link: '/ru/guides' },
+              { text: 'Загрузить мод на сайт', link: '/ru/upload' }
             ]
           }
         ]

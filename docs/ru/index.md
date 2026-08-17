@@ -18,4 +18,7 @@ hero:
     - theme: alt
       text: "Гайды"
       link: /ru/guides.md  
+    - theme: alt
+      text: "Загрузить мод на сайт"
+      link: /ru/upload.md
 ---
