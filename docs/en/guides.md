@@ -155,10 +155,12 @@ You can read more about CSS [here](https://www.w3schools.com/html/html_css.asp),
 
 ## Replacing Models
 <lite-youtube videoid="QJ993E-RB1s"></lite-youtube>
+> https://youtu.be/QJ993E-RB1s
 
 
 ## Replacing and Editing Effects
 <lite-youtube videoid="xx8x77X6qRY"></lite-youtube>
+> https://youtu.be/xx8x77X6qRY
 
 
 ## Attaching effects to model
@@ -166,6 +168,7 @@ You can read more about CSS [here](https://www.w3schools.com/html/html_css.asp),
 This is a simplified guide, it does not cover animations or cloth physics
 :::
 <lite-youtube videoid="2T66IYouIpQ"></lite-youtube>
+> https://youtu.be/2T66IYouIpQ
 
 
 ## Text Replacement
@@ -333,3 +336,55 @@ Before making changes, copy the `fonts` folder to your desktop — this will let
 ::: warning How to Revert Everything
 To roll back the changes, delete the `fonts` folder and put the previously copied folder from your desktop in its place. If you don't have a copy left, delete the `fonts` folder and run a file integrity check.
 :::
+
+
+## Launching Workshop Tools on Linux
+
+### 1. Enabling Proton Experimental
+1. Open the Dota 2 properties in Steam.
+2. Go to the **Compatibility** section.
+3. Enable **Force the use of a specific Steam Play compatibility tool**.
+4. Select `Proton Experimental`.
+5. Wait for the necessary files to finish downloading.
+
+### 2. Installing Workshop Tools
+After the files have finished downloading:
+1. Open the Dota 2 properties in Steam.
+2. Go to the **DLC** section.
+3. Install **Dota 2 Workshop Tools DLC**.
+4. Wait for the necessary files to finish downloading.
+
+### 3. Configuring Launch Options
+In the Dota 2 properties, add the following launch options: `-tools -addon main -language english -novid`
+
+- `main` is the name of the addon that will be used by Workshop Tools. If you want to use a different name, replace `main` with your chosen name in all subsequent steps.
+
+### 4. Creating the Addon Folder
+- Go to: `Steam/steamapps/common/dota 2 beta/content/dota_addons`
+- Create a folder named: `main`
+- This folder is where the required source, or uncompiled, files will be placed.
+
+### 5. Preparing Compiled Files
+- Go to: `Steam/steamapps/common/dota 2 beta/game/dota_addons`
+- Copy the `template_addon` folder.
+- Rename the copy to: `main`
+- Open the newly created `main` folder and delete everything except: `addoninfo.txt`
+
+This folder will contain the compiled files.
+
+### 6. Launching Workshop Tools
+After completing all the steps, launch Dota 2 through Steam.
+
+Workshop Tools should start with the `main` addon.
+
+### Disabling Workshop Tools
+To return to the normal Dota 2 launch:
+
+1. Open the Dota 2 properties in Steam.
+2. Go to the **Compatibility** section.
+3. Disable the forced use of Proton Experimental.
+4. Wait for the required changes to finish.
+5. Remove the following launch options: `-tools -addon main -language english`
+
+### Launching Workshop Tools Again
+To use Workshop Tools again, repeat steps 1, 2, and 3. And then go through all that shit again...
