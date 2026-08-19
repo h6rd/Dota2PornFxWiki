@@ -36,6 +36,12 @@ The mod must not contain unnecessary or uncompiled files.
 Mods containing the `items_game.txt` file will not be accepted.
 :::
 
+### 5. Functionality
+The mod must be functional and free of major bugs.
+
+- If the item is simple, it must include visual effects on the model (see the guides section for how to do this).
+- If the item or set changes ability icons and effects, these must also be included in the mod and function correctly.
+
 Each mod is reviewed individually, and the moderation team reserves the right to reject a mod with a reason provided.
 
 ---
