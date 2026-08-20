@@ -10,7 +10,7 @@ Cosmetic modifications affect only your local client. They provide no gameplay a
 ---
 
 ## Comparison with other changers
-There are various approaches to modifying Dota 2. Understanding how these tools work will help you make an informed choice in favor of safety.
+There are various approaches to modifying Dota2
 
 | Modification type | Method | Risk |
 | :--- | :--- | :--- |
