@@ -5,7 +5,7 @@ const base = process.env.GITHUB_PAGES === 'true' ? '/Dota2PornFxWiki/' : '/'
 export default defineConfig({
   base,
   head: [
-    ['link', { rel: 'icon', href: '/favicon.ico' }]
+    ['link', { rel: 'icon', href: `${base}favicon.ico` }]
   ],
   title: 'Dota2PornFxWiki',
   themeConfig: {
@@ -44,9 +44,9 @@ export default defineConfig({
     en: {
       label: 'English',
       lang: 'en-US',
-      link: '/en/',
+      link: `${base}en/`,
       themeConfig: {
-        logo: '/logo.png',
+        logo: `${base}logo.png`,
         sidebar: [
           {
             text: 'General',
@@ -64,9 +64,9 @@ export default defineConfig({
     ru: {
       label: 'Русский',
       lang: 'ru-RU',
-      link: '/ru/',
+      link: `${base}ru/`,
       themeConfig: {
-        logo: '/logo.png',
+        logo: `${base}logo.png`,
         sidebar: [
           {
             text: 'Основное',
