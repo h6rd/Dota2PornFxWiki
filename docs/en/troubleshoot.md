@@ -79,4 +79,4 @@ If the installed emblem is not showing up in-game, follow these steps:
 3. Immediately after, enter: `r_draw_selected_ring 1`
 
 If this didn't help:
-* Make sure that the `Misc Optimization` mod is disabled inside the **Minify** mod.
+* Make sure that the `Misc Optimization` mod is disabled inside the **Minify**.

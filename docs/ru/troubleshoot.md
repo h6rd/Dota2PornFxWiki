@@ -97,4 +97,4 @@ githubusercontent.com
 3. Сразу после этого введите: `r_draw_selected_ring 1`
 
 Если это не помогло:
-* Убедитесь, что в моде **Minify** отключен мод `Misc Optimization`.
+* Убедитесь, что в **Minify** отключен мод `Misc Optimization`.

@@ -1,6 +1,9 @@
 import { defineConfig } from 'vitepress'
 
+const base = process.env.GITHUB_PAGES === 'true' ? '/Dota2PornFxWiki/' : '/'
+
 export default defineConfig({
+  base,
   head: [
     ['link', { rel: 'icon', href: '/favicon.ico' }]
   ],
