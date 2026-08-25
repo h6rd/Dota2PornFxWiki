@@ -2,7 +2,7 @@
 layout: home
 
 hero:
-  name: "Dota2PornFx"
+  name: "Dota2PornFxWiki"
   tagline: "Here you'll find useful information about the project"
   actions:
     - theme: brand

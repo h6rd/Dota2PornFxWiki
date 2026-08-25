@@ -80,3 +80,11 @@ If the installed emblem is not showing up in-game, follow these steps:
 
 If this didn't help:
 * Make sure that the `Misc Optimization` mod is disabled inside the **Minify**.
+
+
+## Shader Issue
+
+If a shader in the game is displaying incorrectly and appears checkered, follow these steps:
+
+1. Open the graphics settings in the game.
+2. Disable the `World Lighting` setting.

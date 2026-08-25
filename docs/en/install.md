@@ -7,17 +7,19 @@ There are several ways to install mods from the website. Choose the option that 
 3. [Manual installation via cart (with VPKMerge)](#manual-cart-merge)
 4. [Installation via Minify](#minify) `BETA`
 5. [Automatic installation via Mod Manager](#auto-mod-manager)
+6. [Removing mods](#delete-mods)
 
-::: tip English game language
-Dota won't pick up custom language folders like `dota_123`, `dota_minify`, and so on. For the English game language, use **Minify** version **v1.14rc5**:
+::: tip English Language
+Dota will not use custom languages such as `dota_123`, `dota_minify`, and others. For English, use **Minify** from the latest RC version.
 
-1. Download and launch [**Minify v1.14rc5**](https://github.com/Egezenn/dota2-minify/releases/tag/Minify-v1.14rc5).
-2. Download [the mod](https://github.com/Egezenn/dota2-minify-community/releases/download/_/English.Fix.zip) and move its contents into the `mods` folder inside Minify.
-3. In Minify, at the bottom of the window, select any language other than `minify` (for example, `russian`).
+1. Download and launch [**Minify**](https://github.com/Egezenn/dota2-minify/releases/tag/Minify-v1.14rc6).
+2. In Minify, select English at the bottom of the window.
+3. Select the `English Fix` mod.
 4. Click the **Patch** button.
-5. Drop all other mods from the website into the folder for the language you selected in Minify.
-> Video guide: https://www.youtube.com/watch?v=Q_CGKRFoDn8
-:::
+5. In the launch options, add: `-language dutch`
+6. Put all other mods from the website into the `dota_dutch` language folder.
+   :::
+
 
 ---
 
@@ -92,3 +94,12 @@ This method is currently in `BETA` status, so not all mods work correctly
 2. Open the settings and set the language used by your game.
 3. Find the mod you want in the list, click on it, and confirm the install with the **Install** button.
 4. Сlick **Play**.
+
+---
+
+## 6. Removing Mods {#delete-mods}
+
+1. Open **Steam**, right-click **Dota 2** → **Manage** → **Browse local files**.
+2. Navigate to the `game` folder.
+3. Open the game language folder where you installed the mods. For example: `dota_russian`.
+4. Delete all files **except**: `pak01_dir.vpk` (`pak01_000`, `pak01_001`, etc.).
