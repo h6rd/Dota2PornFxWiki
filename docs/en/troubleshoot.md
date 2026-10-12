@@ -1,3 +1,8 @@
+---
+title: Troubleshooting Dota 2 Mods.
+description: Instructions for troubleshooting Dota2PornFx mods.
+---
+
 # Troubleshooting
 
 ## Issues with terrains

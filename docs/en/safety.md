@@ -1,3 +1,7 @@
+---
+title: Dota 2 Mod Security.
+---
+
 # Is it safe?
 
 ## Is it safe to use mods?

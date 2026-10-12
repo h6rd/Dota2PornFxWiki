@@ -6,11 +6,19 @@ For your mod to be published on the website, it must meet the following requirem
 ### 1. Authorship
 **You must be the author of the mod.**
 
-You may use part of someone else's mod only with the author's permission. Proof of permission is required, such as a screenshot of the conversation, a comment, etc.
-- You are considered the author if you created most of the mod, while the creator of the smaller part is credited as the modder, and vice versa. **This is only valid if the original author agrees to it.**
+You may use part of someone else's mod only with the author's permission—proof is required (a screenshot of the conversation, a comment, etc.).
+- The second author is listed as a co-author. **Provided that the author agrees to this**
 
 ::: tip Mod from dota2skinchanger
 If the mod is taken from dota2skinchanger, the original author will be listed on the page, while you will be credited as the modder.
+:::
+
+::: warning Not Accepted
+Mods created by Darkness (dota2skinchanger) are not accepted for publication.
+:::
+
+::: tip Duplicate Submissions
+If the same mod is submitted by two people, the earlier submission will be uploaded, or the more complete one.
 :::
 
 
@@ -21,7 +29,9 @@ If the mod is intended for a hero, such as a model, sound, or effect mod, the he
 
 
 ### 3. Preview
-The mod must have a preview image. If no preview is provided, a placeholder will be used.
+The mod must have a preview image.
+
+Previews must be consistent in style with the works already published on the website. Previews of hero mods must not contain unrelated images/elements (if the hero doesn't fit on the screen, a screenshot from a demo with `hud_toggle_visible` is allowed).
 
 | Mod Type | Preview Requirement |
 | :--- | :--- |
@@ -36,11 +46,19 @@ The mod must not contain unnecessary or uncompiled files.
 Mods containing the `items_game.txt` file will not be accepted.
 :::
 
+<!-- #### Global Effects
+Global effects must not be embedded in the `.vpk` file. For example, if an Arcana has a custom deny or ultimate effect, it must not be included in a hero mod, as it would apply globally. Such effects must be published as separate mods. -->
+
+#### Advertising
+Advertising in mods is prohibited, including links, Telegram usernames, and any other contact details.
+
 ### 5. Functionality
 The mod must be functional and free of major bugs.
 
 - If the item is simple, it must include visual effects on the model (see the guides section for how to do this).
 - If the item or set changes ability icons and effects, these must also be included in the mod and function correctly.
+
+It is recommended to test the mod several times before submitting it, so that it won't need to be updated later.
 
 Each mod is reviewed individually, and the moderation team reserves the right to reject a mod with a reason provided.
 
@@ -50,19 +68,17 @@ Each mod is reviewed individually, and the moderation team reserves the right to
 For easier packaging, I recommend using the **[PreMod](https://github.com/h6rd/PreMod/releases)** script.
 
 ::: tip How to Use
-1. In `config.json`, enter your nickname inside the `""` quotes.
-2. Place the mod image and `.vpk` file next to the script.
-3. Run the script. It will ask you to enter the mod name.
-4. The script will generate a ready-to-upload `.zip` archive.
+1. Place the mod image and `.vpk` file next to the script.
+2. Run the script - it will ask you to enter the mod name.
+3. The result will be a ready-made `.zip` archive.
 :::
 
-Send the finished `.zip` archive to me.
+<!-- ## Uploading the Mod
 
-::: tip First Submission
-Include your nickname and the link that should be displayed on the website.
-:::
+Mods are uploaded through the website:
 
----
+1. Go to the [link](https://h6rd.github.io/Dota2PornFxWeb/upload.html).
+2. Fill in the required fields. -->
 
 ## Where to Submit
 

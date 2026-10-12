@@ -1,3 +1,8 @@
+---
+title: Instructions for Installing Dota 2 Mods.
+description: Instructions for installing mods from Dota2PornFx.
+---
+
 # How to Install Mods?
 
 There are several ways to install mods from the website. Choose the option that is most suitable for you:

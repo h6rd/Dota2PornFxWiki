@@ -1,3 +1,8 @@
+---
+title: Guides for Creating Dota 2 Mods
+description: Instructions for creating mods, textures, models, and effects in Dota 2.
+---
+
 # Guides
 ::: tip Info
 All in-game resources are packed into the `pak01_dir.vpk` file.
