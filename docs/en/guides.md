@@ -416,7 +416,7 @@ The script installs everything into your home folder, no `sudo` required. Choose
 
 | Option | What it is | Requirements |
 | :--- | :--- | :--- |
-| **1. BetterSource2Viewer** | Native Linux AppImage, no Wine (third-party project) | `curl`; `libfuse2` is optional |
+| **1. BetterSource2Viewer** | Native Linux AppImage, no Wine | `curl`; `libfuse2` is optional |
 | **2. Source 2 Viewer (Wine)** | Official Windows build run through Wine | `curl`, `wine` |
 
 ### What you get
@@ -441,6 +441,6 @@ The script installs everything into your home folder, no `sudo` required. Choose
   Use a newer `dotnetdesktop` version if the viewer requires it.
 * **The icon didn't appear:** log out and back in, or re-run the script and choose to skip the download to refresh the shortcuts.
 
-::: warning Important
-BetterSource2Viewer is a third-party project, not the official viewer. Review its source code before installing it.
+:::warning Important
+Before installing, review the source code of what you are installing.
 :::
