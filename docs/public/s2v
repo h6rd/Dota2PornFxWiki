@@ -1,0 +1,637 @@
+#!/bin/sh
+set -eu
+
+APP_ROOT="${HOME}/.local/opt/source2viewer"
+BIN_DIR="${HOME}/.local/bin"
+DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
+CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
+APP_DIR="$DATA_HOME/applications"
+ICON_BASE="$DATA_HOME/icons/hicolor"
+ICON_DIR="$ICON_BASE/scalable/apps"
+MIME_DIR="$DATA_HOME/mime/packages"
+CONFIG_DIR="$CONFIG_HOME/source2viewer"
+MIME_FILE="$MIME_DIR/source2viewer.xml"
+FIND_DOTA="$BIN_DIR/source2viewer-find-dota"
+API="https://api.github.com/repos"
+
+ICON_URL_BETTER="${ICON_URL_BETTER:-https://h6rd.github.io/Dota2PornFxWiki/bs2v.svg}"
+ICON_URL_WINE="${ICON_URL_WINE:-https://raw.githubusercontent.com/ValveResourceFormat/ValveResourceFormat/651253f52bbcc989b4f924fa5e0d70f0fc84abfa/GUI/Icons/Logo.svg}"
+TMP_DIR=""
+
+if [ -t 1 ] && [ -z "${NO_COLOR:-}" ] && [ "${TERM:-dumb}" != "dumb" ]; then
+    ESC=$(printf '\033')
+    C_RST="${ESC}[0m"
+    C_TITLE="${ESC}[1;38;5;183m"
+    C_NUM="${ESC}[1;38;5;177m"
+    C_ACC="${ESC}[38;5;147m"
+    C_OK="${ESC}[38;5;157m"
+    C_WARN="${ESC}[38;5;223m"
+    C_ERR="${ESC}[38;5;211m"
+    C_DIM="${ESC}[38;5;103m"
+else
+    C_RST="" C_TITLE="" C_NUM="" C_ACC="" C_OK="" C_WARN="" C_ERR="" C_DIM=""
+fi
+
+say()  { printf '%s\n' "$*"; }
+info() { printf '%s::%s %s\n' "$C_ACC" "$C_RST" "$*"; }
+ok()   { printf '%s✔%s %s\n' "$C_OK" "$C_RST" "$*"; }
+warn() { printf '%sWarning:%s %s\n' "$C_WARN" "$C_RST" "$*" >&2; }
+dbg()  { [ -z "${S2V_DEBUG:-}" ] || printf '%s  · %s%s\n' "$C_DIM" "$*" "$C_RST"; }
+die()  { printf '%sError:%s %s\n' "$C_ERR" "$C_RST" "$*" >&2; exit 1; }
+
+cleanup() {
+    if [ -n "$TMP_DIR" ] && [ -d "$TMP_DIR" ]; then
+        rm -rf "$TMP_DIR"
+    fi
+}
+trap cleanup EXIT HUP INT TERM
+
+ask() {
+    printf '%s%s%s' "$C_TITLE" "$1" "$C_RST" >&2
+    REPLY=""
+    if [ -t 0 ] || ! ( : </dev/tty ) 2>/dev/null; then
+        IFS= read -r REPLY || REPLY=""
+    else
+        IFS= read -r REPLY </dev/tty || REPLY=""
+    fi
+    [ -n "$REPLY" ] || REPLY="$2"
+}
+
+sq() {
+    printf "'%s'" "$(printf '%s' "$1" | sed "s/'/'\\\\''/g")"
+}
+
+for cmd in curl sed grep head mktemp uname; do
+    command -v "$cmd" >/dev/null 2>&1 ||
+        die "Required command not found: $cmd. Install it with your distribution's package manager."
+done
+
+[ "$(uname -s)" = "Linux" ] || die "This installer supports Linux only."
+ARCH=$(uname -m)
+case "$ARCH" in
+    x86_64|amd64) ;;
+    *) die "Unsupported CPU architecture: $ARCH (only x86_64 builds are available)." ;;
+esac
+
+mkdir -p "$APP_ROOT" "$BIN_DIR" "$APP_DIR" "$ICON_DIR" "$MIME_DIR" "$CONFIG_DIR"
+TMP_DIR=$(mktemp -d "${TMPDIR:-/tmp}/s2v-installer.XXXXXX") ||
+    die "Could not create a temporary directory."
+
+gh_curl() {
+    if [ -n "${GITHUB_TOKEN:-}" ]; then
+        curl -fsSL --retry 3 -H "Authorization: Bearer $GITHUB_TOKEN" "$@"
+    else
+        curl -fsSL --retry 3 "$@"
+    fi
+}
+
+fetch_release() {
+    repo=$1
+    : > "$TMP_DIR/tag.txt"
+    : > "$TMP_DIR/assets.txt"
+
+    if gh_curl -H "Accept: application/vnd.github+json" \
+        "$API/$repo/releases/latest" -o "$2" 2>/dev/null; then
+        grep -o '"tag_name"[[:space:]]*:[[:space:]]*"[^"]*"' "$2" | head -n 1 |
+            sed 's/.*"\([^"]*\)"$/\1/' > "$TMP_DIR/tag.txt"
+        grep -o '"browser_download_url"[[:space:]]*:[[:space:]]*"[^"]*"' "$2" |
+            sed 's/.*"\(https[^"]*\)"$/\1/' > "$TMP_DIR/assets.txt"
+        [ -s "$TMP_DIR/assets.txt" ] && return 0
+    fi
+
+    dbg "GitHub API unavailable (rate limit?); using the public releases page."
+    final=$(curl -fsSL --retry 3 -o /dev/null -w '%{url_effective}' \
+        "https://github.com/$repo/releases/latest") || return 1
+    tag=${final##*/}
+    { [ -n "$tag" ] && [ "$tag" != "latest" ]; } || return 1
+    printf '%s\n' "$tag" > "$TMP_DIR/tag.txt"
+    curl -fsSL --retry 3 \
+        "https://github.com/$repo/releases/expanded_assets/$tag" \
+        -o "$TMP_DIR/assets.html" || return 1
+    grep -o 'href="/[^"]*/releases/download/[^"]*"' "$TMP_DIR/assets.html" |
+        sed 's|^href="|https://github.com|; s|"$||; s|&amp;|\&|g' > "$TMP_DIR/assets.txt"
+    [ -s "$TMP_DIR/assets.txt" ]
+}
+
+release_tag() { head -n 1 "$TMP_DIR/tag.txt"; }
+
+asset_urls() { cat "$TMP_DIR/assets.txt"; }
+
+select_asset_url() {
+    all=$(asset_urls "$2")
+    case "$1" in
+        appimage)
+            list=$(printf '%s\n' "$all" | grep -iE '\.AppImage$' |
+                grep -ivE 'arm|aarch64' || true)
+            pick=$(printf '%s\n' "$list" | grep -iE 'x86_64|x64|amd64' | head -n 1 || true)
+            ;;
+        windows)
+            list=$(printf '%s\n' "$all" | grep -iE '\.(zip|exe)$' |
+                grep -ivE '/cli-|arm|symbols|pdb' || true)
+            pick=$(printf '%s\n' "$list" | grep -iE '/Source2Viewer[^/]*\.exe$' | head -n 1 || true)
+            if [ -z "$pick" ]; then
+                list=$(printf '%s\n' "$list" | grep -iE 'win' || true)
+                pick=$(printf '%s\n' "$list" | grep -iE 'x64|x86_64|win64|amd64' | head -n 1 || true)
+            fi
+            ;;
+        *) return 2 ;;
+    esac
+    [ -n "$pick" ] || pick=$(printf '%s\n' "$list" | head -n 1)
+    [ -n "$pick" ] || return 1
+    printf '%s\n' "$pick"
+}
+
+extract_zip() {
+    mkdir -p "$2"
+    if command -v unzip >/dev/null 2>&1; then
+        unzip -q "$1" -d "$2"
+    elif command -v bsdtar >/dev/null 2>&1; then
+        bsdtar -xf "$1" -C "$2"
+    elif command -v python3 >/dev/null 2>&1; then
+        python3 -m zipfile -e "$1" "$2"
+    else
+        return 1
+    fi
+}
+
+remove_app() {
+    id=$1
+    dbg "Removing $id..."
+    rm -rf "$APP_ROOT/$id"
+    rm -f "$BIN_DIR/$id" "$BIN_DIR/$id-dota" \
+        "$APP_DIR/$id.desktop" "$APP_DIR/$id-dota.desktop" \
+        "$CONFIG_DIR/$id.version" "$CONFIG_DIR/$id-icon.png" "$CONFIG_DIR/$id-icon.svg" \
+        "$ICON_DIR/$id.svg"
+    rm -f "$ICON_BASE"/*/apps/"$id".png
+    drop_mimeapps "$id\\.desktop"
+}
+
+drop_mimeapps() {
+    ml="$CONFIG_HOME/mimeapps.list"
+    [ -f "$ml" ] || return 0
+    sed "\\#$1#d" "$ml" > "$TMP_DIR/mimeapps.new" && cat "$TMP_DIR/mimeapps.new" > "$ml"
+}
+
+uninstall_menu() {
+    say ""
+    say "${C_TITLE}  ◆ Uninstall ◆${C_RST}"
+    say "  ${C_NUM}1)${C_RST} BetterSource2Viewer"
+    say "  ${C_NUM}2)${C_RST} Source 2 Viewer (Wine)"
+    say "  ${C_NUM}3)${C_RST} Everything this installer created"
+    say "  ${C_NUM}4)${C_RST} Back / cancel"
+    say ""
+    ask "Remove [1-4]: " "4"
+    sel=$REPLY
+    case "$sel" in 1|2|3) ;; *) say "Cancelled."; exit 0 ;; esac
+    ask "This cannot be undone. Continue? [y/N]: " "n"
+    case "$REPLY" in y|Y) ;; *) say "Cancelled."; exit 0 ;; esac
+
+    case "$sel" in
+        1) remove_app bettersource2viewer ;;
+        2) remove_app source2viewer-wine ;;
+        3) remove_app bettersource2viewer; remove_app source2viewer-wine ;;
+    esac
+
+    WINE_PREFIX_DIR="$DATA_HOME/source2viewer/wineprefix"
+    if [ "$sel" != "1" ] && [ -d "$WINE_PREFIX_DIR" ]; then
+        ask "Also delete the Wine prefix ($WINE_PREFIX_DIR)? [y/N]: " "n"
+        case "$REPLY" in y|Y) rm -rf "$WINE_PREFIX_DIR" ;; esac
+    fi
+
+    if [ ! -e "$BIN_DIR/bettersource2viewer" ] && [ ! -e "$BIN_DIR/source2viewer-wine" ]; then
+        dbg "No viewers left; removing shared files."
+        rm -f "$FIND_DOTA" "$MIME_FILE" "$CONFIG_DIR/dota-pak-path"
+        drop_mimeapps 'application/x-source2-'
+        rmdir "$CONFIG_DIR" "$APP_ROOT" "$DATA_HOME/source2viewer" 2>/dev/null || true
+    fi
+
+    command -v update-mime-database >/dev/null 2>&1 &&
+        { update-mime-database "$DATA_HOME/mime" >/dev/null 2>&1 || true; }
+    command -v update-desktop-database >/dev/null 2>&1 &&
+        { update-desktop-database "$APP_DIR" >/dev/null 2>&1 || true; }
+    command -v gtk-update-icon-cache >/dev/null 2>&1 && [ -f "$ICON_BASE/index.theme" ] &&
+        { gtk-update-icon-cache -q -f -t "$ICON_BASE" >/dev/null 2>&1 || true; }
+    ok "Uninstalled."
+    exit 0
+}
+
+say ""
+say "${C_TITLE}  ◆ Source 2 Viewer Installer ◆${C_RST}"
+say "${C_DIM}  ─────────────────────────────${C_RST}"
+say "  Choose which viewer to install or update:"
+say ""
+say "  ${C_NUM}1)${C_RST} ${C_ACC}BetterSource2Viewer${C_RST} ${C_DIM}(native Linux AppImage, no Wine)${C_RST}"
+say "     ${C_WARN}Third-party project: review its repository before installing.${C_RST}"
+say "  ${C_NUM}2)${C_RST} ${C_ACC}Source 2 Viewer${C_RST} ${C_DIM}(official Windows build via Wine)${C_RST}"
+say "  ${C_NUM}3)${C_RST} Uninstall"
+say "  ${C_NUM}4)${C_RST} Cancel"
+say ""
+ask "Selection [1-4]: " ""
+
+case "$REPLY" in
+    1)
+        APP_ID="bettersource2viewer"
+        APP_NAME="BetterSource2Viewer"
+        APP_SHORT="BetterS2V"
+        REPO="J0nathan550/BetterSource2Viewer"
+        MODE="appimage"
+        ICON_COLOR="#7658d6"
+        ICON_URL=$ICON_URL_BETTER
+        ;;
+    2)
+        APP_ID="source2viewer-wine"
+        APP_NAME="Source 2 Viewer (Wine)"
+        APP_SHORT="s2v"
+        REPO="ValveResourceFormat/ValveResourceFormat"
+        MODE="windows"
+        ICON_COLOR="#3984c6"
+        ICON_URL=$ICON_URL_WINE
+        if ! command -v wine >/dev/null 2>&1 && ! command -v wine64 >/dev/null 2>&1; then
+            die "Wine is not installed. Install it with your distribution's package manager (e.g. 'wine' or 'wine-stable'), then rerun."
+        fi
+        ;;
+    3) uninstall_menu ;;
+    4) say "Cancelled."; exit 0 ;;
+    *) die "Invalid selection. Run the installer again and enter 1-4." ;;
+esac
+
+TARGET="$APP_ROOT/$APP_ID"
+VERSION_FILE="$CONFIG_DIR/$APP_ID.version"
+LAUNCHER="$BIN_DIR/$APP_ID"
+
+RELEASE_JSON="$TMP_DIR/release.json"
+say ""
+info "Checking the latest $APP_NAME release..."
+fetch_release "$REPO" "$RELEASE_JSON" ||
+    die "Could not retrieve release info (no network, or the repository was moved/removed)."
+LATEST_TAG=$(release_tag "$RELEASE_JSON")
+[ -n "$LATEST_TAG" ] || LATEST_TAG="unknown"
+
+INSTALLED_TAG=""
+[ -f "$VERSION_FILE" ] && IFS= read -r INSTALLED_TAG <"$VERSION_FILE" || true
+
+DOWNLOAD=1
+if [ -n "$INSTALLED_TAG" ] && [ -d "$TARGET" ]; then
+    say "Installed: ${C_ACC}$INSTALLED_TAG${C_RST}   Latest: ${C_OK}$LATEST_TAG${C_RST}"
+    if [ "$INSTALLED_TAG" = "$LATEST_TAG" ]; then
+        ask "Already up to date. [r]einstall binaries or [s]kip download (refresh shortcuts only)? [r/S]: " "s"
+        case "$REPLY" in r|R) DOWNLOAD=1 ;; *) DOWNLOAD=0 ;; esac
+    else
+        ask "A newer version is available. Update now? [Y/n]: " "y"
+        case "$REPLY" in n|N) DOWNLOAD=0 ;; *) DOWNLOAD=1 ;; esac
+    fi
+fi
+
+if [ "$DOWNLOAD" -eq 1 ]; then
+    URL=$(select_asset_url "$MODE" "$RELEASE_JSON") || {
+        say "Assets found in the latest release:" >&2
+        asset_urls "$RELEASE_JSON" >&2 || true
+        die "No compatible binary found. Check the upstream Releases page and adjust select_asset_url()."
+    }
+    info "Downloading $APP_NAME $LATEST_TAG..."
+    dbg "$URL"
+    STAGE="$TMP_DIR/stage"
+    mkdir -p "$STAGE"
+
+    case "$MODE" in
+        appimage)
+            curl -fL -# --retry 3 "$URL" -o "$STAGE/app.AppImage" || die "Download failed: $URL"
+            [ "$(head -c 4 "$STAGE/app.AppImage" | tail -c 3)" = "ELF" ] ||
+                die "Downloaded file is not a valid executable."
+            chmod +x "$STAGE/app.AppImage"
+            mv "$STAGE/app.AppImage" "$STAGE/BetterSource2Viewer.AppImage"
+            ;;
+        windows)
+            case "$URL" in
+                *.zip|*.ZIP)
+                    curl -fL -# --retry 3 "$URL" -o "$TMP_DIR/viewer.zip" || die "Download failed: $URL"
+                    extract_zip "$TMP_DIR/viewer.zip" "$STAGE" ||
+                        die "Could not extract the archive. Install 'unzip' (or bsdtar/python3) and rerun."
+                    ;;
+                *.exe|*.EXE)
+                    curl -fL -# --retry 3 "$URL" -o "$STAGE/Source2Viewer.exe" || die "Download failed: $URL"
+                    ;;
+                *) die "Unsupported release asset format: $URL" ;;
+            esac
+            [ -n "$(find "$STAGE" -type f -iname 'Source2Viewer.exe' -print -quit)" ] ||
+                die "Source2Viewer.exe was not found in the download."
+            ;;
+    esac
+
+    rm -rf "$TARGET"
+    mkdir -p "$TARGET"
+    cp -R "$STAGE"/. "$TARGET"/
+    printf '%s\n' "$LATEST_TAG" > "$VERSION_FILE"
+else
+    info "Refreshing shortcuts..."
+fi
+
+case "$MODE" in
+    appimage)
+        APPIMAGE="$TARGET/BetterSource2Viewer.AppImage"
+        [ -x "$APPIMAGE" ] || die "AppImage is missing: $APPIMAGE"
+        {
+            printf '#!/bin/sh\nset -eu\nAPP=%s\n' "$(sq "$APPIMAGE")"
+            cat <<'LAUNCHER_BODY'
+[ -x "$APP" ] || { echo "AppImage is missing or not executable: $APP" >&2; exit 1; }
+if ! { ldconfig -p 2>/dev/null || /sbin/ldconfig -p 2>/dev/null; } | grep -q 'libfuse\.so\.2'; then
+    export APPIMAGE_EXTRACT_AND_RUN=1
+fi
+exec "$APP" "$@"
+LAUNCHER_BODY
+        } > "$LAUNCHER"
+        ;;
+    windows)
+        EXE=$(find "$TARGET" -type f -iname 'Source2Viewer.exe' -print -quit)
+        [ -n "$EXE" ] || die "Source2Viewer.exe is missing in $TARGET"
+        PREFIX="$DATA_HOME/source2viewer/wineprefix"
+        mkdir -p "$PREFIX"
+        {
+            printf '#!/bin/sh\nset -eu\nEXE=%s\nDEFAULT_PREFIX=%s\n' "$(sq "$EXE")" "$(sq "$PREFIX")"
+            cat <<'LAUNCHER_BODY'
+export WINEPREFIX="${WINEPREFIX:-$DEFAULT_PREFIX}"
+export WINEDEBUG="${WINEDEBUG:--all}"
+[ -f "$EXE" ] || { echo "Source2Viewer.exe not found: $EXE" >&2; exit 1; }
+if command -v wine >/dev/null 2>&1; then WINE=wine
+elif command -v wine64 >/dev/null 2>&1; then WINE=wine64
+else echo "Wine is not installed." >&2; exit 1; fi
+n=$#; i=0
+while [ "$i" -lt "$n" ]; do
+    a=$1; shift
+    if [ -e "$a" ] && command -v winepath >/dev/null 2>&1; then
+        a=$(winepath -w "$a" 2>/dev/null || printf '%s' "$a")
+    fi
+    set -- "$@" "$a"
+    i=$((i + 1))
+done
+exec "$WINE" "$EXE" "$@"
+LAUNCHER_BODY
+        } > "$LAUNCHER"
+        ;;
+esac
+chmod +x "$LAUNCHER"
+
+cat > "$FIND_DOTA" <<'FINDER'
+#!/bin/sh
+set -u
+REL="steamapps/common/dota 2 beta/game/dota/pak01_dir.vpk"
+CFG="${XDG_CONFIG_HOME:-$HOME/.config}/source2viewer/dota-pak-path"
+check() { if [ -f "$1" ]; then printf '%s\n' "$1"; exit 0; fi; }
+
+[ -n "${DOTA2_PAK:-}" ] && check "$DOTA2_PAK"
+if [ -f "$CFG" ]; then
+    IFS= read -r saved <"$CFG" || true
+    [ -n "${saved:-}" ] && check "$saved"
+fi
+for root in \
+    "$HOME/.steam/steam" "$HOME/.steam/root" "$HOME/.steam/debian-installation" \
+    "$HOME/.local/share/Steam" \
+    "$HOME/.var/app/com.valvesoftware.Steam/.local/share/Steam" \
+    "$HOME/snap/steam/common/.local/share/Steam"
+do
+    check "$root/$REL"
+    vdf="$root/steamapps/libraryfolders.vdf"
+    [ -f "$vdf" ] || continue
+    while IFS= read -r lib; do
+        [ -n "$lib" ] && check "$lib/$REL"
+    done <<EOF
+$(sed -n 's/^[[:space:]]*"path"[[:space:]]*"\(.*\)"[[:space:]]*$/\1/p' "$vdf")
+EOF
+done
+exit 1
+FINDER
+chmod +x "$FIND_DOTA"
+
+PAK=$("$FIND_DOTA" 2>/dev/null || true)
+if [ -z "$PAK" ]; then
+    say ""
+    say "Dota 2 pak01_dir.vpk was not found in known Steam libraries."
+    ask "Enter the full path to pak01_dir.vpk (or press Enter to skip): " ""
+    if [ -n "$REPLY" ]; then
+        if [ -f "$REPLY" ]; then
+            printf '%s\n' "$REPLY" > "$CONFIG_DIR/dota-pak-path"
+            PAK="$REPLY"
+        else
+            warn "File not found: $REPLY (skipped)"
+        fi
+    fi
+fi
+
+DOTA_LAUNCHER="$BIN_DIR/$APP_ID-dota"
+{
+    printf '#!/bin/sh\nset -eu\nFINDER=%s\nVIEWER=%s\n' "$(sq "$FIND_DOTA")" "$(sq "$LAUNCHER")"
+    cat <<'DOTA_BODY'
+PAK=$("$FINDER") || {
+    echo "Dota 2 pak01_dir.vpk was not found. Set DOTA2_PAK=/path/to/pak01_dir.vpk or reinstall." >&2
+    exit 1
+}
+exec "$VIEWER" "$PAK"
+DOTA_BODY
+} > "$DOTA_LAUNCHER"
+chmod +x "$DOTA_LAUNCHER"
+
+icon_kind() {
+    [ -f "$1" ] || return 0
+    if [ "$(head -c 4 "$1" | tail -c 3)" = "PNG" ]; then echo png
+    elif head -c 1024 "$1" | grep -q '<svg'; then echo svg; fi
+}
+
+normalize_gh_url() {
+    case "$1" in
+        https://github.com/*/blob/*)
+            printf '%s\n' "$1" | sed 's#^https://github.com/\([^/]*\)/\([^/]*\)/blob/#https://raw.githubusercontent.com/\1/\2/#; s/[?#].*$//' ;;
+        *) printf '%s\n' "$1" ;;
+    esac
+}
+
+ICON_URL=${S2V_ICON_URL:-$ICON_URL}
+ICON_USED=""
+if [ -n "$ICON_URL" ]; then
+    for u in $ICON_URL; do
+        DL_URL=$(normalize_gh_url "$u")
+        dbg "Downloading icon: $DL_URL"
+        if curl -fsSL --retry 2 "$DL_URL" -o "$TMP_DIR/icon.dl" 2>/dev/null; then
+            k=$(icon_kind "$TMP_DIR/icon.dl")
+            if [ -n "$k" ]; then
+                rm -f "$CONFIG_DIR/$APP_ID-icon.png" "$CONFIG_DIR/$APP_ID-icon.svg"
+                cp "$TMP_DIR/icon.dl" "$CONFIG_DIR/$APP_ID-icon.$k"
+                ICON_USED=$u
+                break
+            fi
+            dbg "Not a valid PNG/SVG: $DL_URL"
+        else
+            dbg "Icon download failed: $DL_URL"
+        fi
+    done
+    [ -n "$ICON_USED" ] || dbg "No icon URL worked; using a cached or default icon."
+fi
+
+ICON_SRC=""
+ICON_FROM="built-in placeholder"
+if [ -n "${S2V_ICON:-}" ] && [ -f "$S2V_ICON" ]; then
+    ICON_SRC=$S2V_ICON; ICON_FROM="S2V_ICON"
+else
+    for f in "$CONFIG_DIR/$APP_ID-icon.png" "$CONFIG_DIR/$APP_ID-icon.svg"; do
+        if [ -f "$f" ]; then ICON_SRC=$f; ICON_FROM="${ICON_USED:-custom file $f}"; break; fi
+    done
+fi
+
+if [ -z "$ICON_SRC" ] && [ "$MODE" = "appimage" ] && [ "$DOWNLOAD" -eq 1 ]; then
+    EX="$TMP_DIR/icon-extract"; mkdir -p "$EX"
+    TO=""; command -v timeout >/dev/null 2>&1 && TO="timeout 60"
+    (
+        cd "$EX" || exit 0
+        for pat in '.DirIcon' '*.png' '*.svg'; do
+            $TO "$APPIMAGE" --appimage-extract "$pat" >/dev/null 2>&1 || true
+        done
+    ) || true
+    cand="$EX/squashfs-root/.DirIcon"
+    if [ -z "$(icon_kind "$cand")" ]; then
+        cand=$(find "$EX/squashfs-root" \( -iname '*.png' -o -iname '*.svg' \) -type f \
+            -exec ls -S {} + 2>/dev/null | head -n 1 || true)
+    fi
+    if [ -n "$cand" ] && [ -n "$(icon_kind "$cand")" ]; then
+        ICON_SRC=$cand; ICON_FROM="extracted from AppImage"
+    fi
+fi
+
+rm -f "$ICON_DIR/$APP_ID.svg" "$ICON_BASE"/*/apps/"$APP_ID".png
+ICON_REF="$ICON_DIR/$APP_ID.svg"
+KIND=""
+[ -n "$ICON_SRC" ] && KIND=$(icon_kind "$ICON_SRC")
+case "$KIND" in
+    png)
+        set -- $(od -An -tu1 -j16 -N4 "$ICON_SRC")
+        W=$(( $1 * 16777216 + $2 * 65536 + $3 * 256 + $4 ))
+        [ "$W" -ge 16 ] 2>/dev/null || W=256
+        mkdir -p "$ICON_BASE/${W}x${W}/apps"
+        cp "$ICON_SRC" "$ICON_BASE/${W}x${W}/apps/$APP_ID.png"
+        ICON_REF="$ICON_BASE/${W}x${W}/apps/$APP_ID.png"
+        ;;
+    svg)
+        cp "$ICON_SRC" "$ICON_DIR/$APP_ID.svg"
+        ;;
+    *)
+        ICON_FROM="built-in placeholder"
+        cat > "$ICON_DIR/$APP_ID.svg" <<SVG
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <rect x="8" y="8" width="112" height="112" rx="24" fill="$ICON_COLOR"/>
+  <path d="M64 23 103 46 64 69 25 46Z" fill="#ffffff"/>
+  <path d="M25 46 64 69 64 106 25 83Z" fill="#d7e8ff"/>
+  <path d="M103 46 64 69 64 106 103 83Z" fill="#91bfff"/>
+</svg>
+SVG
+        ;;
+esac
+
+cat > "$MIME_FILE" <<'XML'
+<?xml version="1.0" encoding="UTF-8"?>
+<mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
+  <mime-type type="application/x-source2-vpk">
+    <comment>Source 2 VPK archive</comment>
+    <glob pattern="*.vpk"/>
+  </mime-type>
+  <mime-type type="application/x-source2-resource">
+    <comment>Compiled Source 2 resource</comment>
+    <glob pattern="*.vmat_c"/>
+    <glob pattern="*.vmdl_c"/>
+    <glob pattern="*.vtex_c"/>
+    <glob pattern="*.vmesh_c"/>
+    <glob pattern="*.vpcf_c"/>
+    <glob pattern="*.vsnd_c"/>
+    <glob pattern="*.vxml_c"/>
+    <glob pattern="*.vjs_c"/>
+    <glob pattern="*.vcss_c"/>
+    <glob pattern="*.vmap_c"/>
+    <glob pattern="*.vwrld_c"/>
+    <glob pattern="*.vphys_c"/>
+    <glob pattern="*.vanim_c"/>
+    <glob pattern="*.vseq_c"/>
+    <glob pattern="*.vdata_c"/>
+    <glob pattern="*.vfont_c"/>
+    <glob pattern="*.vcompmat_c"/>
+    <glob pattern="*.vts_c"/>
+    <glob pattern="*.vents_c"/>
+    <glob pattern="*.vnmclip_c"/>
+    <glob pattern="*.vnmskel_c"/>
+    <glob pattern="*.vpost_c"/>
+  </mime-type>
+</mime-info>
+XML
+
+cat > "$APP_DIR/$APP_ID.desktop" <<EOF
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=$APP_NAME
+GenericName=Source 2 Resource Viewer
+Comment=Browse and inspect Source 2 game resources
+Exec="$LAUNCHER" %F
+TryExec=$LAUNCHER
+Icon=$ICON_REF
+Terminal=false
+Categories=Development;Graphics;Utility;
+MimeType=application/x-source2-vpk;application/x-source2-resource;
+StartupNotify=true
+EOF
+
+cat > "$APP_DIR/$APP_ID-dota.desktop" <<EOF
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=pak01_dir.vpk ($APP_SHORT)
+Comment=Open the main Dota 2 archive
+Exec="$DOTA_LAUNCHER"
+TryExec=$DOTA_LAUNCHER
+Icon=$ICON_REF
+Terminal=false
+Categories=Game;Development;
+StartupNotify=true
+EOF
+
+if command -v update-mime-database >/dev/null 2>&1; then
+    update-mime-database "$DATA_HOME/mime" >/dev/null 2>&1 ||
+        warn "update-mime-database failed; file types may appear after re-login."
+else
+    dbg "update-mime-database not found (package: shared-mime-info)"
+fi
+if command -v update-desktop-database >/dev/null 2>&1; then
+    update-desktop-database "$APP_DIR" >/dev/null 2>&1 || true
+fi
+command -v xdg-desktop-menu >/dev/null 2>&1 &&
+    { xdg-desktop-menu forceupdate >/dev/null 2>&1 || true; }
+for k in kbuildsycoca6 kbuildsycoca5; do
+    command -v "$k" >/dev/null 2>&1 && { "$k" >/dev/null 2>&1 || true; break; }
+done
+if command -v gtk-update-icon-cache >/dev/null 2>&1 && [ -f "$ICON_BASE/index.theme" ]; then
+    gtk-update-icon-cache -q -f -t "$ICON_BASE" >/dev/null 2>&1 || true
+fi
+if command -v xdg-mime >/dev/null 2>&1; then
+    xdg-mime default "$APP_ID.desktop" application/x-source2-vpk >/dev/null 2>&1 || true
+    xdg-mime default "$APP_ID.desktop" application/x-source2-resource >/dev/null 2>&1 || true
+else
+    warn "xdg-mime not found; set the default app manually in your file manager."
+fi
+
+say ""
+if [ "$DOWNLOAD" -eq 1 ]; then
+    ok "${C_TITLE}$APP_NAME $LATEST_TAG installed${C_RST}"
+else
+    ok "${C_TITLE}$APP_NAME $LATEST_TAG: shortcuts refreshed${C_RST}"
+fi
+say "  ${C_ACC}Menu shortcut:${C_RST} pak01_dir.vpk ($APP_SHORT)"
+if [ -n "$PAK" ]; then
+    say "  ${C_ACC}Dota 2 archive:${C_RST} $PAK"
+else
+    say "  ${C_ACC}Dota 2 archive:${C_RST} ${C_WARN}not found${C_RST} (set DOTA2_PAK=/path/to/pak01_dir.vpk and rerun)"
+fi
+[ "$ICON_FROM" != "built-in placeholder" ] ||
+    say "  ${C_ACC}Icon:${C_RST} ${C_WARN}built-in placeholder${C_RST} (icon URL was unreachable)"
+dbg "Launcher: $LAUNCHER"
+dbg "Icon: $ICON_FROM -> $ICON_REF"
+if [ "$MODE" = "appimage" ]; then
+    say "${C_DIM}  If it does not start: install libfuse2 and check glibc >= 2.34.${C_RST}"
+else
+    say "${C_DIM}  If it does not start: winetricks dotnetdesktop8 (WINEPREFIX=$DATA_HOME/source2viewer/wineprefix).${C_RST}"
+fi
+say "${C_DIM}  Run the installer again to update or uninstall.${C_RST}"

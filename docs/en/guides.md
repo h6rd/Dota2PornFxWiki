@@ -393,3 +393,54 @@ To return to the normal Dota 2 launch:
 
 ### Launching Workshop Tools Again
 To use Workshop Tools again, repeat steps 1, 2, and 3. And then go through all that shit again...
+
+## Installing Source2Viewer on Linux
+On Windows, just download [Source2Viewer](https://valveresourceformat.github.io/). On Linux, use the installer script: it sets up the viewer, adds an icon, associates Source 2 files with it, and creates a menu shortcut that opens `pak01_dir.vpk` in one click.
+
+### Quick install
+Run in a terminal:
+
+```bash
+curl -fsSL https://d2pfxwiki.pages.dev/s2v | sh
+```
+
+::: details Prefer to read the script first?
+```bash
+curl -fsSL https://d2pfxwiki.pages.dev/s2v -o install.sh
+less install.sh
+sh install.sh
+```
+:::
+
+The script installs everything into your home folder, no `sudo` required. Choose a viewer:
+
+| Option | What it is | Requirements |
+| :--- | :--- | :--- |
+| **1. BetterSource2Viewer** | Native Linux AppImage, no Wine (third-party project) | `curl`; `libfuse2` is optional |
+| **2. Source 2 Viewer (Wine)** | Official Windows build run through Wine | `curl`, `wine` |
+
+### What you get
+* A **`pak01_dir.vpk (s2v)`** entry in your applications menu (**`(BetterS2V)`** for option 1) that opens the main Dota 2 archive directly. The script finds Dota 2 in all your Steam libraries (native, Flatpak, and Snap Steam are supported).
+* An app icon and menu entry for the viewer itself.
+* File associations: `.vpk`, `.vtex_c`, `.vmdl_c`, `.vsnd_c`, `.vcss_c`, `.vpcf_c` and other Source 2 files open in the viewer when double-clicked.
+
+### Updating and uninstalling
+* **Update:** run the same command again. The script detects the installed version and offers to update.
+* **Uninstall:** run it again and choose **Uninstall**. You can remove one viewer or everything the script created.
+
+### Troubleshooting
+* **Dota 2 not found:** the script will ask for the path to `pak01_dir.vpk`. You can also pass it directly:
+  ```bash
+  DOTA2_PAK="/path/to/pak01_dir.vpk" curl -fsSL https://YOUR-SITE/install.sh | sh
+  ```
+* **The AppImage doesn't start:** install `libfuse2` (the launcher falls back to extract-and-run mode automatically) and make sure your system has glibc 2.34 or newer.
+* **The Wine version doesn't start:** install the .NET Desktop Runtime into its prefix:
+  ```bash
+  WINEPREFIX=~/.local/share/source2viewer/wineprefix winetricks dotnetdesktop8
+  ```
+  Use a newer `dotnetdesktop` version if the viewer requires it.
+* **The icon didn't appear:** log out and back in, or re-run the script and choose to skip the download to refresh the shortcuts.
+
+::: warning Important
+BetterSource2Viewer is a third-party project, not the official viewer. Review its source code before installing it.
+:::
