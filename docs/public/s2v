@@ -14,7 +14,7 @@ MIME_FILE="$MIME_DIR/source2viewer.xml"
 FIND_DOTA="$BIN_DIR/source2viewer-find-dota"
 API="https://api.github.com/repos"
 
-ICON_URL_BETTER="${ICON_URL_BETTER:-https://h6rd.github.io/Dota2PornFxWiki/bs2v.svg}"
+ICON_URL_BETTER="${ICON_URL_BETTER:-https://d2pfxwiki.pages.dev/bs2v.svg https://h6rd.github.io/Dota2PornFxWiki/bs2v.svg}"
 ICON_URL_WINE="${ICON_URL_WINE:-https://raw.githubusercontent.com/ValveResourceFormat/ValveResourceFormat/651253f52bbcc989b4f924fa5e0d70f0fc84abfa/GUI/Icons/Logo.svg}"
 TMP_DIR=""
 
@@ -509,7 +509,7 @@ case "$KIND" in
         ICON_REF="$ICON_BASE/${W}x${W}/apps/$APP_ID.png"
         ;;
     svg)
-        cp "$ICON_SRC" "$ICON_DIR/$APP_ID.svg"
+        sed -E 's/#([0-9a-fA-F]{6})[fF][fF]([^0-9a-fA-F])/#\1\2/g' "$ICON_SRC" > "$ICON_DIR/$APP_ID.svg"
         ;;
     *)
         ICON_FROM="built-in placeholder"
