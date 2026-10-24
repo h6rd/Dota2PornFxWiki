@@ -412,12 +412,16 @@ sh install.sh
 ```
 :::
 
+:::warning Important
+Before installing, review the source code of what you are installing.
+:::
+
 The script installs everything into your home folder, no `sudo` required. Choose a viewer:
 
 | Option | What it is | Requirements |
 | :--- | :--- | :--- |
-| **1. BetterSource2Viewer** | Native Linux AppImage, no Wine | `curl`; `libfuse2` is optional |
-| **2. Source 2 Viewer (Wine)** | Official Windows build run through Wine | `curl`, `wine` |
+| **1. [BetterSource2Viewer](https://github.com/J0nathan550/BetterSource2Viewer)** | Native Linux AppImage, no Wine | `curl`; `libfuse2` is optional |
+| **2. [Source 2 Viewer](https://github.com/ValveResourceFormat/ValveResourceFormat)** | Official Windows build run through Wine | `curl`, `wine` |
 
 ### What you get
 * A **`pak01_dir.vpk (s2v)`** entry in your applications menu (**`(BetterS2V)`** for option 1) that opens the main Dota 2 archive directly. The script finds Dota 2 in all your Steam libraries (native, Flatpak, and Snap Steam are supported).
@@ -440,7 +444,3 @@ The script installs everything into your home folder, no `sudo` required. Choose
   ```
   Use a newer `dotnetdesktop` version if the viewer requires it.
 * **The icon didn't appear:** log out and back in, or re-run the script and choose to skip the download to refresh the shortcuts.
-
-:::warning Important
-Before installing, review the source code of what you are installing.
-:::
