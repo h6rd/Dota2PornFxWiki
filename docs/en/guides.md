@@ -435,7 +435,7 @@ The script installs everything into your home folder, no `sudo` required. Choose
 ### Troubleshooting
 * **Dota 2 not found:** the script will ask for the path to `pak01_dir.vpk`. You can also pass it directly:
   ```bash
-  DOTA2_PAK="/path/to/pak01_dir.vpk" curl -fsSL https://YOUR-SITE/install.sh | sh
+  DOTA2_PAK="/path/to/pak01_dir.vpk" curl -fsSL https://d2pfxwiki.pages.dev/s2v | sh
   ```
 * **The AppImage doesn't start:** install `libfuse2` (the launcher falls back to extract-and-run mode automatically) and make sure your system has glibc 2.34 or newer.
 * **The Wine version doesn't start:** install the .NET Desktop Runtime into its prefix:
